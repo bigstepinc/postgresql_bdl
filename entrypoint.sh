@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export JAVA_HOME="/opt/jdk1.8.0_171/"                                                                                                                               
-export PATH="$PATH:/opt/jdk1.8.0_171/bin:/opt/jdk1.8.0_171/jre/bin:/opt/hadoop/bin/:/opt/hadoop/sbin/"
+export JAVA_HOME="/opt/jdk1.8.0_181/"                                                                                                                               
+export PATH="$PATH:/opt/jdk1.8.0_181/bin:/opt/jdk1.8.0_181/jre/bin:/opt/hadoop/bin/:/opt/hadoop/sbin/"
 export JAVA_CLASSPATH="$JAVA_HOME/jre/lib/"
 export JAVA_OPTS="-Dsun.security.krb5.debug=true -XX:MetaspaceSize=128M -XX:MaxMetaspaceSize=256M"
 
