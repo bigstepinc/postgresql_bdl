@@ -11,7 +11,6 @@ RUN apt-get install -y wget lbzip2 gcc libreadline6-dev  zlib1g-dev libssl-dev l
     libxml2-dev libxslt1.1 libxslt1-dev uuid uuid-dev perl make pax-utils
     
 RUN useradd postgres
-USER postgres
 
 RUN wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSION/postgresql-$PG_VERSION.tar.bz2" && \
     mkdir -p /usr/src/postgresql && \
@@ -32,7 +31,8 @@ RUN wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSI
      mkdir -p /var/run/postgresql && \
      chown -R postgres /var/run/postgresql && \
      chmod 777 /entrypoint.sh
-     
+USER postgres
+
 EXPOSE 5432
 
 ENTRYPOINT ["/entrypoint.sh"]
