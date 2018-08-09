@@ -99,7 +99,7 @@ RUN wget http://repo.uk.bigstepcloud.com/bigstep/datalab/datalab_getting_started
    cp logo.png $CONDA_DIR/doc/global/template/images/logo.png && \
    rm -rf logo.png 
    
-RUN apt-get install -y libcairo3-dev  python3-cairo-dev
+RUN apt-get install -y libcairo2-dev  python3-cairo-dev
 
 RUN cd /tmp && \
     wget "http://repo.bigstepcloud.com/bigstep/datalab/sbt-0.13.11.tgz" -O /tmp/sbt-0.13.11.tgz && \
