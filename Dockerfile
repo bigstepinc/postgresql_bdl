@@ -27,7 +27,8 @@ RUN wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSI
 		   /usr/local/share/man && \
      mkdir -p /var/run/postgresql && \
      useradd postgres && \
-     chown -R postgres /var/run/postgresql
+     chown -R postgres /var/run/postgresql && \
+     chmod 777 /entrypoint.sh
      
 EXPOSE 5432
 
