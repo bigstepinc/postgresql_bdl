@@ -3,12 +3,12 @@ FROM ubuntu:16.04
 ENV PG_MAJOR 9.6
 ENV PG_VERSION 9.6.1
 ENV PG_SHA256 e5101e0a49141fc12a7018c6dad594694d3a3325f5ab71e93e0e51bd94e51fcd
-
+ENV LD_LIBRARY_PATH /usr/local/lib/
 COPY entrypoint.sh /
 
 RUN apt-get update
 RUN apt-get install -y wget lbzip2 gcc libreadline6-dev  zlib1g-dev libssl-dev libxml2  \
-    libxml2-dev libxslt1.1 libxslt1-dev uuid uuid-dev perl make pax-utils
+    libxml2-dev libxslt1.1 libxslt1-dev vim uuid uuid-dev perl make pax-utils
     
 RUN useradd postgres
 
@@ -30,7 +30,17 @@ RUN wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSI
 		   /usr/local/share/man && \
      mkdir -p /var/run/postgresql && \
      chown -R postgres /var/run/postgresql && \
-     chmod 777 /entrypoint.sh
+     chown -R postgres /var/lib && \
+     chown -R postgres /usr/local && \
+     chown -R postgres /var/run/postgresql && \
+     chmod 777 /entrypoint.sh && \
+     mkdir -p /bigstep && \
+     chown -R postgres /bigstep && \ 
+     cd /bigstep && \
+     chown -R postgres /usr/share/ && \
+     mkdir -p /usr/share/zoneinfo && \
+     chown -R postgres /usr/share/zoneinfo 	
+
 USER postgres
 
 EXPOSE 5432
