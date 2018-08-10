@@ -8,41 +8,41 @@ if [ "$CONTAINER_DIR" != "" ]; then
    mkdir -p /run/postgresql
    chmod g+s /run/postgresql
    chown -R postgres /run/postgresql
-   su - postgres -c initdb -D $CONTAINER_DIR
-   
+   su - postgres -c "initdb -D $CONTAINER_DIR"
+
    mkdir /var/lib/postgresql
    chmod 777 /var/lib/postgresql
    chown -R postgres /var/lib/postgresql
-    
+
    export PGDATA=$CONTAINER_DIR
-   chmod 644 $PGDATA/pg_hba.conf
+   chmod 777 $PGDATA/pg_hba.conf
    export authMethod=md5 
    
-   { echo; echo "host all all all $authMethod"; } | su - postgres -c tee -a "$PGDATA/pg_hba.conf" > /dev/null
-    
-   su - postgres -c pg_ctl -D "$PGDATA" \
-			-o "-c listen_addresses='*'" \
-			-w start
-   
+   { echo; echo "host all all all $authMethod"; } | su - postgres -c "tee -a '$PGDATA/pg_hba.conf' > /dev/null"
+
+   ln -s /usr/local/lib/libpq.so.5 /usr/lib/libpq.so.5
+
+   su - postgres -c "pg_ctl -D $PGDATA -o '-c listen_addresses="*"' -w start"
+
    export POSTGRES_PASSWORD=$(cat \/bigstep\/secrets\/$POSTGRES_HOSTNAME\/POSTGRES_PASSWORD)
-    
+
    psql=( psql -v ON_ERROR_STOP=1 )
 
-	su - postgres -c "${psql[@]}" --username postgres <<-EOSQL
-		ALTER USER postgres PASSWORD '$POSTGRES_PASSWORD' ;
-	EOSQL
-	echo
-		
-	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+        su - postgres -c "'${psql[@]}' --username postgres <<-EOSQL
+                ALTER USER postgres PASSWORD '$POSTGRES_PASSWORD' ;
+        EOSQL"
+        echo
 
-	echo
-      
-        su - postgres -c pg_ctl -D "$PGDATA" -m fast -w stop
+        psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
 
-	 echo
-	 echo 'PostgreSQL init process complete; ready for start up.'
-	 echo
+        echo
+
+        su - postgres -c "pg_ctl -D $PGDATA -m fast -w stop"
+
+         echo
+         echo 'PostgreSQL init process complete; ready for start up.'
+         echo
 fi
-unset $POSTGRES_PASSWORD
+unset POSTGRES_PASSWORD
 # Start PostgreSQL as long-running process
-postgres -D $PGDATA
+su - postgres -c "postgres -D $PGDATA"
