@@ -43,8 +43,6 @@ RUN wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSI
      mkdir -p /usr/share/zoneinfo && \
      chown -R postgres /usr/share/zoneinfo 	
 
-USER postgres
-
 EXPOSE 5432
 
 ENTRYPOINT ["/entrypoint.sh"]
