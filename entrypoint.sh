@@ -8,7 +8,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
    mkdir -p /run/postgresql
    chmod g+s /run/postgresql
    chown -R postgres /run/postgresql
-   initdb -D $CONTAINER_DIR
+   su - postgres -c initdb -D $CONTAINER_DIR
    
    mkdir /var/lib/postgresql
    chmod 777 /var/lib/postgresql
@@ -18,9 +18,9 @@ if [ "$CONTAINER_DIR" != "" ]; then
    chmod 644 $PGDATA/pg_hba.conf
    export authMethod=md5 
    
-   { echo; echo "host all all all $authMethod"; } | tee -a "$PGDATA/pg_hba.conf" > /dev/null
+   { echo; echo "host all all all $authMethod"; } | su - postgres -c tee -a "$PGDATA/pg_hba.conf" > /dev/null
     
-   pg_ctl -D "$PGDATA" \
+   su - postgres -c pg_ctl -D "$PGDATA" \
 			-o "-c listen_addresses='*'" \
 			-w start
    
@@ -28,7 +28,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
     
    psql=( psql -v ON_ERROR_STOP=1 )
 
-	"${psql[@]}" --username postgres <<-EOSQL
+	su - postgres -c "${psql[@]}" --username postgres <<-EOSQL
 		ALTER USER postgres PASSWORD '$POSTGRES_PASSWORD' ;
 	EOSQL
 	echo
@@ -37,7 +37,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
 
 	echo
       
-        pg_ctl -D "$PGDATA" -m fast -w stop
+        su - postgres -c pg_ctl -D "$PGDATA" -m fast -w stop
 
 	 echo
 	 echo 'PostgreSQL init process complete; ready for start up.'
