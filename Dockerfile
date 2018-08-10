@@ -36,8 +36,10 @@ RUN wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSI
      chmod 777 /entrypoint.sh && \
      mkdir -p /bigstep && \
      chown -R postgres /bigstep && \ 
+     mkdir -p /bigstep && \
      cd /bigstep && \
      chown -R postgres /usr/share/ && \
+     chown -R postgres /bigstep && \
      mkdir -p /usr/share/zoneinfo && \
      chown -R postgres /usr/share/zoneinfo 	
 
