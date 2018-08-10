@@ -15,6 +15,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
    chown -R postgres /var/lib/postgresql
     
    export PGDATA=$CONTAINER_DIR
+   chmod 644 $PGDATA/pg_hba.conf
    export authMethod=md5 
    
    { echo; echo "host all all all $authMethod"; } | tee -a "$PGDATA/pg_hba.conf" > /dev/null
