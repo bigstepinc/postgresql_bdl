@@ -8,7 +8,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
    mkdir -p /run/postgresql
    chmod g+s /run/postgresql
    chown -R $POSTGRES_USER /run/postgresql
-   runuser -l $POSTGRES_USER -c 'initdb -D $CONTAINER_DIR'
+   runuser -l $POSTGRES_USER -c "initdb -D $CONTAINER_DIR"
 
    mkdir /var/lib/postgresql
    chmod 777 /var/lib/postgresql
