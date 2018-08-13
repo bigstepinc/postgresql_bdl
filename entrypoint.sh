@@ -20,8 +20,8 @@ if [ "$CONTAINER_DIR" != "" ]; then
    chmod 777 $PGDATA/pg_hba.conf
    export authMethod=md5 
    
-   #{ echo; echo "host all all all $authMethod"; } | runuser -l postgres -c 'tee -a "$PGDATA/pg_hba.conf" > /dev/null'
    { echo; echo "host all all all $authMethod"; } | runuser -l postgres -c 'tee -a' "$PGDATA/pg_hba.conf"' > /dev/null'
+
    ln -s /usr/local/lib/libpq.so.5 /usr/lib/libpq.so.5
 
    runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -o \"-c listen_addresses='*'\" -w start"
@@ -30,16 +30,16 @@ if [ "$CONTAINER_DIR" != "" ]; then
 
    psql=( psql -v ON_ERROR_STOP=1 )
 
-        runuser -l $POSTGRES_USER -c "${psql[@]} --username \"$POSTGRES_USER\" <<-EOSQL
-                ALTER USER $POSTGRES_USER PASSWORD \'$POSTGRES_PASSWORD\' ;
-        EOSQL"
-        echo
+        "${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+			       ALTER USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD' ;
+		   EOSQL
+		   echo
 
-        psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+         psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
 
-        echo
+         echo
 
-        runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -m fast -w stop"
+         runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -m fast -w stop"
 
          echo
          echo 'PostgreSQL init process complete; ready for start up.'
