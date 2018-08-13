@@ -23,6 +23,8 @@ if [ "$CONTAINER_DIR" != "" ]; then
    { echo; echo "host all all all $authMethod"; } | runuser -l postgres -c 'tee -a' "$PGDATA/pg_hba.conf"' > /dev/null'
 
    ln -s /usr/local/lib/libpq.so.5 /usr/lib/libpq.so.5
+   
+   echo "listen_addresses='x'" >> $PGDATA/postgresql.conf
 
    runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -o \"-c listen_addresses='*'\" -w start"
 
