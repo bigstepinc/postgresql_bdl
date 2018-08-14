@@ -1,6 +1,17 @@
 #!/bin/bash
 
 if [ "$CONTAINER_DIR" != "" ]; then
+   useradd $POSTGRES_USER
+   chown -R $POSTGRES_USER /var/run/postgresql && \
+   chown -R $POSTGRES_USER /var/lib && \
+   chown -R $POSTGRES_USER /usr/local && \
+   chown -R $POSTGRES_USER /var/run/postgresql && \
+   mkdir -p /bigstep && \
+   chown -R $POSTGRES_USER /bigstep && \ 
+   chown -R $POSTGRES_USER /usr/share/ && \
+   chown -R $POSTGRES_USER /bigstep && \
+   mkdir -p /usr/share/zoneinfo && \
+   chown -R $POSTGRES_USER /usr/share/zoneinfo 
    cd /bigstep
    mkdir -p $CONTAINER_DIR
    chmod 700 "$CONTAINER_DIR"
@@ -12,9 +23,9 @@ if [ "$CONTAINER_DIR" != "" ]; then
 
    mkdir /var/lib/postgresql
    chmod 777 /var/lib/postgresql
-   chown -R postgres /var/lib/postgresql
+   chown -R $POSTGRES_USER /var/lib/postgresql
    
-   mkdir /home/postgres
+   mkdir /home/$POSTGRES_USER
    
    export PGDATA=$CONTAINER_DIR
    chmod 777 $PGDATA/pg_hba.conf
@@ -36,16 +47,13 @@ if [ "$CONTAINER_DIR" != "" ]; then
 	EOSQL
 	echo
 
-         #psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+        runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -m fast -w stop"
 
-         #echo
-
-         runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -m fast -w stop"
-
-         echo
-         echo 'PostgreSQL init process complete; ready for start up.'
-         echo
+        echo
+        echo 'PostgreSQL init process complete; ready for start up.'
+        echo
 fi
 unset POSTGRES_PASSWORD
+
 # Start PostgreSQL as long-running process
 runuser -l $POSTGRES_USER -c "postgres -D $PGDATA"
