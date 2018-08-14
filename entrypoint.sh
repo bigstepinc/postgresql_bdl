@@ -30,7 +30,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
 
    runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -o \"-c listen_addresses='*'\" -w start"
 
-   export POSTGRES_PASSWORD=$(cat \/bigstep\/secrets\/$POSTGRES_HOSTNAME\/POSTGRES_PASSWORD)
+   # export POSTGRES_PASSWORD=$(cat \/bigstep\/secrets\/$POSTGRES_HOSTNAME\/POSTGRES_PASSWORD)
 
    psql=( psql -v ON_ERROR_STOP=1 )
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
