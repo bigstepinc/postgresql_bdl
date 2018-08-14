@@ -2,17 +2,8 @@
 
 if [ "$CONTAINER_DIR" != "" ]; then
    useradd $POSTGRES_USER
-   chown -R $POSTGRES_USER /var/run/postgresql && \
-   chown -R $POSTGRES_USER /var/lib && \
-   chown -R $POSTGRES_USER /usr/local && \
-   chown -R $POSTGRES_USER /var/run/postgresql && \
-   mkdir -p /bigstep && \
-   chown -R $POSTGRES_USER /bigstep && \ 
-   chown -R $POSTGRES_USER /usr/share/ && \
-   chown -R $POSTGRES_USER /bigstep && \
-   mkdir -p /usr/share/zoneinfo && \
+   mkdir -p /usr/share/zoneinfo
    chown -R $POSTGRES_USER /usr/share/zoneinfo 
-   cd /bigstep
    mkdir -p $CONTAINER_DIR
    chmod 700 "$CONTAINER_DIR"
    chown -R $POSTGRES_USER "$CONTAINER_DIR"
@@ -31,11 +22,11 @@ if [ "$CONTAINER_DIR" != "" ]; then
    chmod 777 $PGDATA/pg_hba.conf
    export authMethod=md5 
    
-   { echo; echo "host all all all $authMethod"; } | runuser -l postgres -c 'tee -a' "$PGDATA/pg_hba.conf"' > /dev/null'
+   { echo; echo "host all all all $authMethod"; } | runuser -l $POSTGRES_USER -c 'tee -a' "$PGDATA/pg_hba.conf"' > /dev/null'
 
    ln -s /usr/local/lib/libpq.so.5 /usr/lib/libpq.so.5
    
-   echo "listen_addresses='x'" >> $PGDATA/postgresql.conf
+   echo "listen_addresses='*'" >> $PGDATA/postgresql.conf
 
    runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -o \"-c listen_addresses='*'\" -w start"
 
