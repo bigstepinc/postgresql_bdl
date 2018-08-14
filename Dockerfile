@@ -10,8 +10,6 @@ RUN apt-get update
 RUN apt-get install -y wget lbzip2 gcc libreadline6-dev  zlib1g-dev libssl-dev libxml2  \
     libxml2-dev libxslt1.1 libxslt1-dev vim uuid uuid-dev perl make pax-utils
     
-RUN useradd postgres
-
 RUN wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSION/postgresql-$PG_VERSION.tar.bz2" && \
     mkdir -p /usr/src/postgresql && \
     tar --extract --file postgresql.tar.bz2 --directory /usr/src/postgresql --strip-components 1 && \
@@ -29,19 +27,7 @@ RUN wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSI
 	      /usr/local/share/doc \
 		   /usr/local/share/man && \
      mkdir -p /var/run/postgresql && \
-     chown -R postgres /var/run/postgresql && \
-     chown -R postgres /var/lib && \
-     chown -R postgres /usr/local && \
-     chown -R postgres /var/run/postgresql && \
-     chmod 777 /entrypoint.sh && \
-     mkdir -p /bigstep && \
-     chown -R postgres /bigstep && \ 
-     mkdir -p /bigstep && \
-     cd /bigstep && \
-     chown -R postgres /usr/share/ && \
-     chown -R postgres /bigstep && \
-     mkdir -p /usr/share/zoneinfo && \
-     chown -R postgres /usr/share/zoneinfo 	
+     chmod 777 /entrypoint.sh 	
 
 EXPOSE 5432
 
