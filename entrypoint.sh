@@ -33,7 +33,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
 
    psql=( psql -v ON_ERROR_STOP=1 )
    	
-	if [ "$POSTGRES_USER" != 'postgres' ]; then
+	if [ "$DB_USER" != 'postgres' ]; then
 		"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
 			CREATE USER $DB_USER ;
 		EOSQL
