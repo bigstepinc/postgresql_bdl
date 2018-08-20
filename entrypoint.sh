@@ -30,24 +30,28 @@ if [ "$CONTAINER_DIR" != "" ]; then
 
    runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -o \"-c listen_addresses='*'\" -w start"
 
-   # export POSTGRES_PASSWORD=$(cat \/bigstep\/secrets\/$POSTGRES_HOSTNAME\/POSTGRES_PASSWORD)
-
    psql=( psql -v ON_ERROR_STOP=1 )
    	
+	if [ "$POSTGRES_USER" != 'postgres' ]; then
+		"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+			CREATE USER $DB_USER ;
+		EOSQL
+	fi
+	
 	if [ "$POSTGRES_DB" != 'postgres' ]; then
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-		CREATE DATABASE "$POSTGRES_USER" ;
+		CREATE DATABASE "$DB_NAME" ;
 	EOSQL
 	echo
 	fi
    
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-		ALTER USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD' ;
+		ALTER USER $DB_USER PASSWORD '$DB_PASSWORD' ;
 	EOSQL
 	echo
 	
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-		grant all PRIVILEGES on database "$POSTGRES_USER" to "$POSTGRES_USER" ;
+		grant all PRIVILEGES on database "$DB_NAME" to "$DB_USER" ;
 	EOSQL
 	echo
 
