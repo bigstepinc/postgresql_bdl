@@ -2,6 +2,7 @@
 
 if [ "$CONTAINER_DIR" != "" ]; then
    useradd $POSTGRES_USER
+   useradd $DB_USER
    mkdir -p /usr/share/zoneinfo
    chown -R $POSTGRES_USER /usr/share/zoneinfo 
    mkdir -p $CONTAINER_DIR
@@ -35,6 +36,11 @@ if [ "$CONTAINER_DIR" != "" ]; then
 	if [ "$POSTGRES_USER" != 'postgres' ]; then
 		"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
 			CREATE USER $DB_USER ;
+		EOSQL
+	else
+		"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+			CREATE USER postgres SUPERUSER;
+			CREATE DATABASE postgres WITH OWNER postgres;
 		EOSQL
 	fi
 	
