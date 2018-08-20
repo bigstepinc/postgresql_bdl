@@ -36,7 +36,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
    	
 	if [ "$POSTGRES_DB" != 'postgres' ]; then
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-		CREATE DATABASE "$POSTGRES_DB" ;
+		CREATE DATABASE "$POSTGRES_USER" ;
 	EOSQL
 	echo
 	fi
@@ -47,7 +47,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
 	echo
 	
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-		grant all PRIVILEGES on database "$POSTGRES_DB" to "$POSTGRES_USER" ;
+		grant all PRIVILEGES on database "$POSTGRES_USER" to "$POSTGRES_USER" ;
 	EOSQL
 	echo
 
