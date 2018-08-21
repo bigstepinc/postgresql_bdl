@@ -30,36 +30,56 @@ if [ "$CONTAINER_DIR" != "" ]; then
    echo "listen_addresses='*'" >> $PGDATA/postgresql.conf
 
    runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -o \"-c listen_addresses='*'\" -w start"
+   
+   export PGPASSWORD=$POSTGRES_PASSWORD 
 
    psql=( psql -v ON_ERROR_STOP=1 )
    	
-	if [ "$DB_USER" != 'postgres' ]; then
-		"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-			CREATE USER $DB_USER ;
-		EOSQL
-	else
-		"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-			CREATE USER postgres SUPERUSER;
-			CREATE DATABASE postgres WITH OWNER postgres;
-		EOSQL
-	fi
-	
-	if [ "$POSTGRES_DB" != 'postgres' ]; then
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-		CREATE DATABASE "$DB_NAME" ;
+			ALTER USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD' ;
 	EOSQL
 	echo
-	fi
+
+	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+
+	echo
+	
+
+	psql -h $POSTGRES_HOSTNAME -p $POSTGRES_PORT  -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+
+	psql -h $POSTGRES_HOSTNAME -p $POSTGRES_PORT  -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE DATABASE $DB_NAME;"
+
+	psql -h $POSTGRES_HOSTNAME -p $POSTGRES_PORT  -U $POSTGRES_USER -d $POSTGRES_DB -c "grant all PRIVILEGES on database $DB_NAME to $DB_USER;" 
+
+	
+	
+	#if [ "$DB_USER" != 'postgres' ]; then
+	#	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+#			CREATE USER $DB_USER ;#
+	#	EOSQL
+	#else
+#		"${psql[@]}" --username $POSTGRES_USER <<-EOSQL#
+#			CREATE USER postgres SUPERUSER;#
+#			CREATE DATABASE postgres WITH OWNER postgres;
+#		EOSQL
+#	fi
+	
+#	if [ "$POSTGRES_DB" != 'postgres' ]; then
+#	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+#		CREATE DATABASE "$DB_NAME" ;
+#	EOSQL
+#	echo
+#	fi
    
-	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-		ALTER USER $DB_USER PASSWORD '$DB_PASSWORD' ;
-	EOSQL
-	echo
+#	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+#		ALTER USER $DB_USER PASSWORD '$DB_PASSWORD' ;
+#	EOSQL
+#	echo
 	
-	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-		grant all PRIVILEGES on database "$DB_NAME" to "$DB_USER" ;
-	EOSQL
-	echo
+#	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+##		grant all PRIVILEGES on database "$DB_NAME" to "$DB_USER" ;
+#	EOSQL
+#	echo
 
         runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -m fast -w stop"
 
@@ -67,7 +87,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
         echo 'PostgreSQL init process complete; ready for start up.'
         echo
 fi
-unset POSTGRES_PASSWORD
+unset PGPASSWORD
 
 # Start PostgreSQL as long-running process
 runuser -l $POSTGRES_USER -c "postgres -D $PGDATA"
