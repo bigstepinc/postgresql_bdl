@@ -44,43 +44,33 @@ if [ "$CONTAINER_DIR" != "" ]; then
 
 	echo
 	
+	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+			CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';
+	EOSQL
+	echo
 
-	psql -h $POSTGRES_HOSTNAME -p $POSTGRES_PORT  -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';"
+	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
 
-	psql -h $POSTGRES_HOSTNAME -p $POSTGRES_PORT  -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE DATABASE $DB_NAME;"
+	echo
 
-	psql -h $POSTGRES_HOSTNAME -p $POSTGRES_PORT  -U $POSTGRES_USER -d $POSTGRES_DB -c "grant all PRIVILEGES on database $DB_NAME to $DB_USER;" 
+	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+			CREATE DATABASE $DB_NAME;
+	EOSQL
+	echo
 
+	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+
+	echo	
 	
-	
-	#if [ "$DB_USER" != 'postgres' ]; then
-	#	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-#			CREATE USER $DB_USER ;#
-	#	EOSQL
-	#else
-#		"${psql[@]}" --username $POSTGRES_USER <<-EOSQL#
-#			CREATE USER postgres SUPERUSER;#
-#			CREATE DATABASE postgres WITH OWNER postgres;
-#		EOSQL
-#	fi
-	
-#	if [ "$POSTGRES_DB" != 'postgres' ]; then
-#	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-#		CREATE DATABASE "$DB_NAME" ;
-#	EOSQL
-#	echo
-#	fi
-   
-#	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-#		ALTER USER $DB_USER PASSWORD '$DB_PASSWORD' ;
-#	EOSQL
-#	echo
-	
-#	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-##		grant all PRIVILEGES on database "$DB_NAME" to "$DB_USER" ;
-#	EOSQL
-#	echo
+	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+			grant all PRIVILEGES on database $DB_NAME to $DB_USER;
+	EOSQL
+	echo
 
+	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+
+	echo
+	
         runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -m fast -w stop"
 
         echo
