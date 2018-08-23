@@ -32,6 +32,9 @@ if [ "$CONTAINER_DIR" != "" ]; then
    runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -o \"-c listen_addresses='*'\" -w start"
    
    export PGPASSWORD=$POSTGRES_PASSWORD 
+   
+   export POSTGRES_USER=postgres
+   export POSTGRES_DB=postgres
 
    psql=( psql -v ON_ERROR_STOP=1 )
    	
