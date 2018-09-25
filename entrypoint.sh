@@ -48,7 +48,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
 	echo
 	
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-			CREATE USER $DB_USER WITH PASSWORD '$DB_PASSWORD';
+			CREATE USER "$DB_USER" WITH PASSWORD '$DB_PASSWORD';
 	EOSQL
 	echo
 
@@ -57,7 +57,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
 	echo
 
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-			CREATE DATABASE $DB_NAME;
+			CREATE DATABASE "$DB_NAME";
 	EOSQL
 	echo
 
@@ -66,7 +66,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
 	echo	
 	
 	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-			grant all PRIVILEGES on database $DB_NAME to $DB_USER;
+			grant all PRIVILEGES on database "$DB_NAME" to "$DB_USER";
 	EOSQL
 	echo
 
