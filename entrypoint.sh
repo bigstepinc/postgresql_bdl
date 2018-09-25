@@ -23,7 +23,7 @@ if [ "$CONTAINER_DIR" != "" ]; then
    chmod 777 $PGDATA/pg_hba.conf
    export authMethod=md5 
    
-   { echo; echo "host all all all $authMethod"; } | runuser -l $POSTGRES_USER -c 'tee -a' "$PGDATA/pg_hba.conf"' > /dev/null'
+   runuser -l $POSTGRES_USER -c '{ echo; echo "host all all all '$authMethod'"; } | tee -a "'$PGDATA/pg_hba.conf'" > /dev/null'
 
    ln -s /usr/local/lib/libpq.so.5 /usr/lib/libpq.so.5
    
