@@ -9,6 +9,8 @@ COPY entrypoint.sh /
 RUN apt-get update
 RUN apt-get install -y wget lbzip2 gcc libreadline6-dev  zlib1g-dev libssl-dev libxml2  \
     libxml2-dev libxslt1.1 libxslt1-dev vim uuid uuid-dev perl make pax-utils
+
+RUN apt-get install tzdata
     
 RUN wget -O postgresql.tar.bz2 "https://ftp.postgresql.org/pub/source/v$PG_VERSION/postgresql-$PG_VERSION.tar.bz2" && \
     mkdir -p /usr/src/postgresql && \
