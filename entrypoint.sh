@@ -2,7 +2,6 @@
 
 if [ "$CONTAINER_DIR" != "" ]; then
    useradd $POSTGRES_USER
-   useradd $DB_USER
    mkdir -p /usr/share/zoneinfo
    chown -R $POSTGRES_USER /usr/share/zoneinfo 
    mkdir -p $CONTAINER_DIR
@@ -43,32 +42,34 @@ if [ "$CONTAINER_DIR" != "" ]; then
 	EOSQL
 	echo
 
-	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+  # useradd $DB_USER
 
-	echo
+	# psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+
+	# echo
 	
-	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-			CREATE USER "$DB_USER" WITH PASSWORD '$DB_PASSWORD';
-	EOSQL
-	echo
+	# "${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+	# 		CREATE USER "$DB_USER" WITH PASSWORD '$DB_PASSWORD';
+	# EOSQL
+	# echo
 
-	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+	# psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
 
-	echo
+	# echo
 
-	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-			CREATE DATABASE "$DB_NAME";
-	EOSQL
-	echo
+	# "${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+	# 		CREATE DATABASE "$DB_NAME";
+	# EOSQL
+	# echo
 
-	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
+	# psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
 
-	echo	
+	# echo	
 	
-	"${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-			grant all PRIVILEGES on database "$DB_NAME" to "$DB_USER";
-	EOSQL
-	echo
+	# "${psql[@]}" --username $POSTGRES_USER <<-EOSQL
+	# 		grant all PRIVILEGES on database "$DB_NAME" to "$DB_USER";
+	# EOSQL
+	# echo
 
 	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
 
