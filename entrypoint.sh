@@ -27,6 +27,8 @@ if [ "$CONTAINER_DIR" != "" ]; then
    ln -s /usr/local/lib/libpq.so.5 /usr/lib/libpq.so.5
    
    echo "listen_addresses='*'" >> $PGDATA/postgresql.conf
+   echo "autovacuum = on" >> $PGDATA/postgresql.conf
+   echo "track_counts = on" >> $PGDATA/postgresql.conf
 
    runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -o \"-c listen_addresses='*'\" -w start"
    
@@ -41,35 +43,6 @@ if [ "$CONTAINER_DIR" != "" ]; then
 			ALTER USER $POSTGRES_USER PASSWORD '$POSTGRES_PASSWORD' ;
 	EOSQL
 	echo
-
-  # useradd $DB_USER
-
-	# psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
-
-	# echo
-	
-	# "${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-	# 		CREATE USER "$DB_USER" WITH PASSWORD '$DB_PASSWORD';
-	# EOSQL
-	# echo
-
-	# psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
-
-	# echo
-
-	# "${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-	# 		CREATE DATABASE "$DB_NAME";
-	# EOSQL
-	# echo
-
-	# psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
-
-	# echo	
-	
-	# "${psql[@]}" --username $POSTGRES_USER <<-EOSQL
-	# 		grant all PRIVILEGES on database "$DB_NAME" to "$DB_USER";
-	# EOSQL
-	# echo
 
 	psql+=( --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" )
 
