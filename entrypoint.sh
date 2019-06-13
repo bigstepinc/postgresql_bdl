@@ -29,6 +29,8 @@ if [ "$CONTAINER_DIR" != "" ]; then
    echo "listen_addresses='*'" >> $PGDATA/postgresql.conf
    echo "autovacuum = on" >> $PGDATA/postgresql.conf
    echo "track_counts = on" >> $PGDATA/postgresql.conf
+   echo "log_autovacuum_min_duration = 0" >> $PGDATA/postgresql.conf
+   echo "autovacuum_naptime = 30s" >> $PGDATA/postgresql.conf
 
    runuser -l $POSTGRES_USER -c "pg_ctl -D $PGDATA -o \"-c listen_addresses='*'\" -w start"
    
